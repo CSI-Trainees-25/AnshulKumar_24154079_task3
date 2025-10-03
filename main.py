@@ -58,8 +58,8 @@ class Player(Ship):
 
 class Enemy(Ship):
     colours={
-        "red": (red_space_ship, red_laser)
-        "green": (green_space_ship, green_laser)
+        "red": (red_space_ship, red_laser),
+        "green": (green_space_ship, green_laser),
         "blue": (blue_space_ship, blue_laser)
     }
 
@@ -80,6 +80,7 @@ def main():
     lives=5
     player_vel=5
     main_font= pygame.font.SysFont("sans serif", 50)
+    lost_font= pygame.font.SysFont("sans serif", 60)
 
     player= Player(300, 650)
 
@@ -88,7 +89,8 @@ def main():
     enemy_vel=1
 
     clock= pygame.time.Clock()
-
+    lost=False
+    lost_count=0
 
     def redraw_window():
         win.blit(bg,(0,0))
@@ -103,11 +105,37 @@ def main():
             enemy.draw(win)
         
         player.draw(win)
+
+        if lost:
+            lost_label= lost_font.render("Oh! You Lost...",1,(255,255,255))
+            win.blit(lost_label, (width/2 - lost_label.get_width()/2, 350))
+
+        
         pygame.display.update()
 
     while run:
         clock.tick(fps)
+        redraw_window()
         
+        if lives<=0 or player.health<=0:
+            lost=True
+            lost_count+=1
+        
+        if lost:
+            if lost_count > fps*3:
+                run=False
+            else:
+                continue
+
+        
+        
+        if len(enemies)==0:
+            level+=1
+            wave_length+=5
+            for i in range(wave_length):
+                enemy= Enemy(random.randrange(50,width-100), random.randrange(-1500,-100), random.choice(["red","blue","green"]))
+                enemies.append(enemy)
+
         
         for event in pygame.event.get():
             if event.type==pygame.QUIT:
@@ -123,7 +151,14 @@ def main():
         if keys[pygame.K_DOWN] and (player.y+player_vel+player.ship_height())<height:
             player.y += player_vel
 
-        redraw_window()
+
+        for xenemy in enemies:
+            xenemy.move(enemy_vel)
+            if xenemy.y+xenemy.ship_height() > height:
+                lives-=1
+                enemies.remove(xenemy)
+                
+        
 
         
 
