@@ -1,4 +1,6 @@
 import pygame
+from pygame.locals import *
+from pygame import mixer
 import os
 import time
 import random
@@ -6,9 +8,15 @@ pygame.font.init()
 
 
 #creating_window
+pygame.init()
 width, height = 800, 700
 win= pygame.display.set_mode((width,height))
 pygame.display.set_caption("Space Invaders Shootout")
+#setting_background-music
+mixer.init()
+mixer.music.load("space-invaders-classic-arcade-game-116826.wav")
+mixer.music.play()
+
 
 #loading_images
 red_space_ship= pygame.image.load("pics/pixel_ship_red_small.png")
